@@ -1,0 +1,22 @@
+# We can't run the binary file, it segfault
+# Let's try to give it an arg, it prints "No !"
+# Let's gdb to see where it segfault and why
+# Set a breakpoint and go slowly to check from where it comes
+
+gdb ./level0
+b main
+run
+ni # let's do that until we got the segfault
+# It segfault on 0x08048ed4 register
+# We can see it match with a call of atoi and we can see there is also a cmp call right after atoi's call
+# Let's check what value is compared, we have  0x08048ed9 <+25>:	cmp    $0x1a7,%eax
+# 0x1a7 needs to be converted from hexa to decimal, we found out the value is 423
+# Which means atoi is waiting for 423 value
+# Let's try to run the binary with this value as arg
+# It returns us on a new prompt
+# Let's check if we can cat the file .pass with new prompt
+# As said in the subject, pass is in /home/user/level1/.pass file
+
+cat /home/user/level1/.pass
+
+# 1fe8a524fa4bec01ca4ea2a869af2a02260d4a7d5fe7e7c24d8617e6dca12d3a

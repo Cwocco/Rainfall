@@ -1,0 +1,10 @@
+# We have a level1 binary, let's try to execute.
+# Does nothing, let's use gdb again
+
+gdb ./level1
+b main # breakpoint
+run
+disas main
+# When we disas we cann see a gets call, let's search for something with that call
+
+
