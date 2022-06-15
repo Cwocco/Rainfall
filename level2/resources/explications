@@ -1,0 +1,11 @@
+# Let's see the function called
+info functions
+
+# We can see function gets, strdup, main and p, let's disas t have an idea for calling order.
+disas main
+
+# main call p func without any arguments, let's then disas p
+disas p
+
+# We can see call of gets, printf, strdup. Seems like we cant use the same exploit than last level with EIP, stack is lock this time.
+# We will probably need to find an other way to use buffer overflow 
